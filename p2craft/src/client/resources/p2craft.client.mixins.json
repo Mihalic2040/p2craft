@@ -1,0 +1,15 @@
+{
+	"required": true,
+	"package": "com.mihalic2040.p2craft.client.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"ConnectScreenMixin",
+		"ServerStatusPingerMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

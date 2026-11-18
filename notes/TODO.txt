@@ -1,0 +1,2 @@
+1. Gracefull shutdown of connections when HOLE is closed.
+2. Add docker wraper for the hole. 

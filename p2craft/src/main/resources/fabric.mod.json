@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "p2craft",
+	"version": "${version}",
+	"name": "p2craft",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "All-Rights-Reserved",
+	"icon": "assets/p2craft/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.mihalic2040.p2craft.P2craft"
+		],
+		"client": [
+			"com.mihalic2040.p2craft.client.P2craftClient"
+		]
+	},
+	"mixins": [
+		"p2craft.mixins.json",
+		{
+			"config": "p2craft.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.20.1",
+		"minecraft": "~1.20.6",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
