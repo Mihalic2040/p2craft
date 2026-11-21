@@ -29,7 +29,7 @@ Everything below is implemented in `core/`
 │ (mixins rewrite *.p2p addresses)     │                │  libp2p host               │
 │        ▲                             │                │  stream handler ──TCP──►   │
 │        │ JNA                         │   libp2p       │      Minecraft server      │
-│  libp2pcraft native lib (Go) ◄───────┼── stream ──────┼► 0.0.0.0:25565             │
+│   libp2craft native lib (Go) ◄───────┼── stream ──────┼► 0.0.0.0:25565             │
 │  TCPProxy per remote peer            │ direct / holepunched / via relay            │
 └──────────────────────────────────────┘                └────────────────────────────┘
 ```
@@ -129,13 +129,13 @@ go build -o build/hole ./cmd/hole
    ```
 
    The key file is created on first run (mode 0600, parent directory 0700). Keep it: it defines your peer ID.
-3. Read the log line `Hole ID: <peer-id>.p2p` and share that value to the players.
+3. Read the log line `Hole ID: <peer-id>.p2p` and share that value with the players.
 
 
 | Variable | Used by | Meaning |
 |---|---|---|
 | `HOLE_PRIV_KEY` | `hole` | libp2p private-key file; created if missing.|
-| `HOLE_TARGET_ADDR` | `hole` | Deafult is 127.0.0.1:25565 |
+| `HOLE_TARGET_ADDR` | `hole` | Default is 127.0.0.1:25565 |
 
 
 ### Joining
