@@ -39,7 +39,7 @@ func main() {
 
 	go node.MonitorDHT()
 	go node.WatchAutoRelay()
-	p2craft.RegisterMinecraftHandler(node.Host, "0.0.0.0:25565")
+	p2craft.RegisterMinecraftHandler(node.Host, target_addres)
 	log.Println("Service started.")
 
 	<-ctx.Done()
