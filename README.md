@@ -2,8 +2,6 @@
 
 P2Craft lets a Minecraft Java client join a server through a [libp2p](https://libp2p.io) connection instead of a public IP and port forwarding. The server side is a small Go daemon (`hole`) that sits next to a Minecraft server. The client side is a Fabric mod with an embedded Go library. Players enter `<peer-id>.p2p` as the server address.
 
-> **Status:** early-stage. See [Known limitations](#known-limitations).
-
 ## Features
 
 Everything below is implemented in `core/` 
