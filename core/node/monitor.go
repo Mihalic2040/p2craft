@@ -3,6 +3,8 @@ package node
 import (
 	"log"
 	"time"
+
+	"github.com/libp2p/go-libp2p/core/event"
 )
 
 func (n *Node) MonitorDHT() {
@@ -25,4 +27,51 @@ func (n *Node) MonitorDHT() {
 			)
 		}
 	}
+}
+
+func (n *Node) WatchAutoRelay() error {
+	h := n.Host
+	ctx := n.Ctx
+	sub, err := h.EventBus().Subscribe(
+		new(event.EvtAutoRelayAddrsUpdated),
+	)
+	if err != nil {
+		return err
+	}
+
+	go func() {
+		defer sub.Close()
+
+		log.Println("[AUTORELAY] Waiting for relay reservations...")
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+
+			case e, ok := <-sub.Out():
+				if !ok {
+					return
+				}
+
+				evt := e.(event.EvtAutoRelayAddrsUpdated)
+
+				if len(evt.RelayAddrs) == 0 {
+					log.Println("[AUTORELAY] No active relay reservations")
+					continue
+				}
+
+				log.Printf(
+					"[AUTORELAY] %d active relay address(es)",
+					len(evt.RelayAddrs),
+				)
+
+				for _, addr := range evt.RelayAddrs {
+					log.Printf("[AUTORELAY] Available: %s", addr)
+				}
+			}
+		}
+	}()
+
+	return nil
 }

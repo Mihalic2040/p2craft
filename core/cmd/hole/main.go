@@ -24,10 +24,21 @@ func main() {
 		panic(err)
 	}
 
+	target_addres := os.Getenv("HOLE_TARGET_ADDR")
+	if target_addres == "" {
+		log.Println("[WARN]", "No target addr specified. Using default 127.0.0.1:25565")
+		target_addres = "127.0.0.1:25565"
+	}
+
 	hole_id := node.Host.ID().String() + ".p2p"
 	log.Println("Hole ID:", hole_id)
 
+	for _, addr := range node.Host.Addrs() {
+		log.Println("Listening on:", addr)
+	}
+
 	go node.MonitorDHT()
+	go node.WatchAutoRelay()
 	p2craft.RegisterMinecraftHandler(node.Host, "0.0.0.0:25565")
 	log.Println("Service started.")
 

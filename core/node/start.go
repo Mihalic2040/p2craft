@@ -33,6 +33,18 @@ func (n *Node) Start() error {
 		return err
 	}
 
+	log.Println("MDNS Started.")
+
+	go RunAutoRelayFeeder(
+		n.Ctx,
+		n.Host,
+		n.Idht,
+		nil, // trusted peers
+		n.peer_cnah,
+	)
+
+	log.Println("RelayFeeder Started.")
+
 	return nil
 }
 

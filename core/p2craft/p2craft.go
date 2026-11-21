@@ -5,12 +5,14 @@ import (
 	"net"
 	"sync"
 
+	dht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/libp2p/go-libp2p/core/host"
 	"github.com/libp2p/go-libp2p/core/peer"
 )
 
 type TCPProxy struct {
 	host   host.Host
+	dht    *dht.IpfsDHT
 	remote peer.ID
 
 	listener net.Listener
@@ -21,9 +23,10 @@ type TCPProxy struct {
 	once sync.Once
 }
 
-func NewTCPProxy(h host.Host, remote peer.ID) *TCPProxy {
+func NewTCPProxy(h host.Host, dht *dht.IpfsDHT, remote peer.ID) *TCPProxy {
 	return &TCPProxy{
 		host:   h,
 		remote: remote,
+		dht:    dht,
 	}
 }

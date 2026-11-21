@@ -45,6 +45,9 @@ func Connect() C.int {
 
 	n := node.NewNode(false, "")
 
+	go n.MonitorDHT()
+	go n.WatchAutoRelay()
+
 	if err := n.Start(); err != nil {
 		log.Println(err)
 		status = StatusError
@@ -85,7 +88,7 @@ func CreateTunnel(remoteID *C.char) *C.char {
 		return nil
 	}
 
-	proxy := p2craft.NewTCPProxy(hostNode.Host, serverID)
+	proxy := p2craft.NewTCPProxy(hostNode.Host, hostNode.Idht, serverID)
 
 	if err := proxy.Start("127.0.0.1:0"); err != nil {
 		return nil

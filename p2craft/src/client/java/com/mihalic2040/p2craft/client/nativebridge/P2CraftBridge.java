@@ -86,10 +86,6 @@ public final class P2CraftBridge {
                 if (x64) {
                     return "/natives/windows-x86-64/p2craft.dll";
                 }
-
-                if (arm64) {
-                    return "/natives/windows-aarch64/p2craft.dll";
-                }
             }
 
             throw new UnsupportedOperationException(

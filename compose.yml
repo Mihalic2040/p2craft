@@ -1,0 +1,12 @@
+services:
+  hole:
+    build:
+      context: ./core/
+      dockerfile: Dockerfile
+    container_name: hole
+    restart: unless-stopped
+    volumes:
+      - ./data:/app
+    environment:
+      HOLE_PRIV_KEY: /app/private.key
+    

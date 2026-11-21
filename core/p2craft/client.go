@@ -66,6 +66,7 @@ func (p *TCPProxy) handleConnection(conn net.Conn) {
 		log.Printf("[PROXY] Failed to open stream: %v", err)
 		return
 	}
+	log.Println("Addr", stream.Conn().RemoteMultiaddr())
 	defer stream.Close()
 
 	log.Printf("[PROXY] Connected to %s", p.remote)

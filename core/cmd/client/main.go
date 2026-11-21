@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	node := node.NewNode(false)
+	node := node.NewNode(false, "")
 	if err := node.Start(); err != nil {
 		panic(err)
 	}
@@ -26,7 +26,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	tcp_hole := p2craft.NewTCPProxy(node.Host, serverID)
+	go node.MonitorDHT()
+	go node.WatchAutoRelay()
+
+	tcp_hole := p2craft.NewTCPProxy(node.Host, node.Idht, serverID)
 	tcp_hole.Start("127.0.0.1:6666")
 
 	select {}
