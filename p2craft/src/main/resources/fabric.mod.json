@@ -3,13 +3,13 @@
 	"id": "p2craft",
 	"version": "${version}",
 	"name": "p2craft",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Connect to Minecraft servers directly using .p2p addresses, without public IPs or port forwarding.",
 	"authors": [
-		"Me!"
+		"Mihalic2040"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://modrinth.com/mod/p2craft",
+		"sources": "https://github.com/Mihalic2040/p2craft"
 	},
 	"license": "All-Rights-Reserved",
 	"icon": "assets/p2craft/icon.png",

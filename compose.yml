@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: hole
     restart: unless-stopped
+    network_mode: host
     volumes:
       - ./data:/app
     environment:
