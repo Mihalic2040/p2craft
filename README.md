@@ -2,7 +2,10 @@
 
 P2Craft lets a Minecraft Java client join a server through a [libp2p](https://libp2p.io) connection instead of a public IP and port forwarding. The server side is a small Go daemon (`hole`) that sits next to a Minecraft server. The client side is a Fabric mod with an embedded Go library. Players enter `<peer-id>.p2p` as the server address.
 
-## Docker
+## Usage
+
+Start your Minecraft server so it listens on **port 25565** on the same machine.
+The key file is created on first run (mode 0600, parent directory 0700). Keep it: it defines your peer ID.
 
 ### docker-compose.yml
 
@@ -24,9 +27,22 @@ services:
 
 ```sh
 docker compose up -d
-docker compose logs hole      # shows the Hole ID `Hole ID: fdfds....p2p`
+docker compose logs hole      # shows the Hole ID `Hole ID: <peer-id>.p2p`
 ```
 
+Read the log line `Hole ID: <peer-id>.p2p` and share that value with the players.
+
+### Joining
+
+The mod has no UI of its own. So i think you know how to add a server? O_o. 
+Use .p2p addres from hole as server addres.
+
+
+### NO docker
+```sh
+cd core
+HOLE_PRIV_KEY=../data/private.key HOLE_TARGET_ADDR=127.0.0.1:25565 ./build/hole
+```
 
 ## Features
 
@@ -68,12 +84,6 @@ Everything below is implemented in `core/`
 6. On the other end, the `hole` program connects to the actual Minecraft server and passes data back and forth.
 
 The connection between players is encrypted by libp2p. The connection between Minecraft and the local proxy uses regular localhost TCP.
-
-### Connectivity
-
-Both nodes try to become reachable: port mapping, AutoNAT reachability checks, relay reservations (AutoRelay), and hole punching. The relay candidates come from a custom peer source (`core/node/peer_source_relay.go`) that periodically feeds in DHT-closest peers and currently connected peers. The feeder first fires after 15 s and then backs off ×3 each round, capped at 1 h.
-
-P2Craft nodes do not run a relay service themselves (`EnableRelayService` is not used). They use relays offered by other libp2p peers. The code does not opt in to data over limited relay connections (no `network.WithAllowLimitedConn` in `core/`), so treat relays as a means of coordinating hole punching. Whether a given NAT combination ends up with a direct connection is not guaranteed.
 
 ## Architecture
 
@@ -141,36 +151,6 @@ Other targets: `linux-arm64`, `windows-amd64`, `build`.
 cd core
 go build -o build/hole ./cmd/hole
 ```
-
-## Usage
-
-### Hosting
-
-1. Start your Minecraft server so it listens on **port 25565** on the same machine.
-2. Start `hole`:
-
-   ```sh
-   cd core
-   HOLE_PRIV_KEY=../data/private.key HOLE_TARGET_ADDR=127.0.0.1:25565 ./build/hole
-   ```
-
-   The key file is created on first run (mode 0600, parent directory 0700). Keep it: it defines your peer ID.
-3. Read the log line `Hole ID: <peer-id>.p2p` and share that value with the players.
-
-
-| Variable | Used by | Meaning |
-|---|---|---|
-| `HOLE_PRIV_KEY` | `hole` | libp2p private-key file; created if missing.|
-| `HOLE_TARGET_ADDR` | `hole` | Default is 127.0.0.1:25565 |
-
-
-### Joining
-
-The mod has no UI of its own. So i think you know how to add a server? O_o
-
-## Troubleshooting
-
-Good luck. 
 
 ## Known problems
 
