@@ -1,13 +1,14 @@
 services:
-  hole:
-    build:
-      context: ./core/
-      dockerfile: Dockerfile
-    container_name: hole
-    restart: unless-stopped
-    network_mode: host
-    volumes:
-      - ./data:/app
-    environment:
-      HOLE_PRIV_KEY: /app/private.key
-    
+    hole:
+        build:
+          context: ./core/
+          dockerfile: Dockerfile
+        container_name: hole
+        restart: unless-stopped
+        network_mode: host
+        volumes:
+          - ./data:/app
+        environment:
+          HOLE_PRIV_KEY: /app/private.key
+          HOLE_TARGET_ADDR: 127.0.0.1:25565
+`

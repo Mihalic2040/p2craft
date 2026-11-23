@@ -2,6 +2,32 @@
 
 P2Craft lets a Minecraft Java client join a server through a [libp2p](https://libp2p.io) connection instead of a public IP and port forwarding. The server side is a small Go daemon (`hole`) that sits next to a Minecraft server. The client side is a Fabric mod with an embedded Go library. Players enter `<peer-id>.p2p` as the server address.
 
+## Docker
+
+### docker-compose.yml
+
+```
+services:
+    hole:
+        image: ghcr.io/mihalic2040/p2craft:main
+        container_name: hole
+        restart: unless-stopped
+        network_mode: host
+        volumes:
+          - ./hole:/app
+        environment:
+          HOLE_PRIV_KEY: /app/private.key
+          HOLE_TARGET_ADDR: 127.0.0.1:25565
+```
+
+### CMD
+
+```sh
+docker compose up -d
+docker compose logs hole      # shows the Hole ID `Hole ID: fdfds....p2p`
+```
+
+
 ## Features
 
 Everything below is implemented in `core/` 
@@ -141,16 +167,6 @@ go build -o build/hole ./cmd/hole
 ### Joining
 
 The mod has no UI of its own. So i think you know how to add a server? O_o
-
-
-### Docker (server)
-
-`compose.yml` builds `core/Dockerfile` into a `hole` image, mounts `./data` as `/app`, and sets `HOLE_PRIV_KEY=/app/private.key`:
-
-```sh
-docker compose up -d --build
-docker compose logs hole      # shows the Hole ID
-```
 
 ## Troubleshooting
 
