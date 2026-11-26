@@ -1,0 +1,87 @@
+name: Build mod
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: gradle/actions/wrapper-validation@v6
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: microsoft
+          java-version: "25"
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: core/go.mod
+          cache-dependency-path: core/go.sum
+
+      - name: Install cross-compilers
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu gcc-mingw-w64-x86-64
+
+      - name: Build natives and mod
+        working-directory: p2craft
+        run: |
+          chmod +x gradlew
+          ./gradlew build
+
+      - name: Collect release files and checksums
+        shell: bash
+        run: |
+          mkdir dist
+          cp p2craft/build/libs/*.jar dist/
+
+          mapfile -t jars < <(find dist -name '*.jar' ! -name '*-sources.jar')
+          if [ "${#jars[@]}" -ne 1 ]; then
+            echo "Expected exactly one mod JAR, found ${#jars[@]}"
+            exit 1
+          fi
+
+          add_native() {  # <path under natives/> <release file name>
+            cp "p2craft/src/main/resources/natives/$1" "dist/$2"
+            unzip -p "${jars[0]}" "natives/$1" | cmp - "dist/$2"
+          }
+          add_native linux-x86-64/libp2craft.so  libp2craft-linux-x86-64.so
+          add_native linux-aarch64/libp2craft.so libp2craft-linux-aarch64.so
+          add_native windows-x86-64/p2craft.dll  p2craft-windows-x86-64.dll
+
+          cd dist
+          sha256sum *.jar *.so *.dll | tee SHA256SUMS.txt
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: p2craft-mod
+          path: dist/
+          if-no-files-found: error
+
+      - name: Attest build provenance
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: |
+            dist/*.jar
+            dist/*.so
+            dist/*.dll
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/* --verify-tag --generate-notes
